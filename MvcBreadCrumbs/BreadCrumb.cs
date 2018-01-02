@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -145,7 +145,37 @@ namespace MvcBreadCrumbs
 			return sb.ToString();
 
 		}
-		public static string DisplayRaw()
+
+        public static string Display( string htmlContentOverride="ol",string cssClassOverride = "breadcrumb", string cssClassItemOverride = "", string cssClassItemLinkOverride = "", string cssClassActiveOverride= "active")
+        {
+
+            var state = StateManager.GetState(SessionProvider.SessionId);
+
+            if (state.Crumbs != null && !state.Crumbs.Any())
+                return "<!-- BreadCrumbs stack is empty -->";
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("<"+ htmlContentOverride + " class=\"");
+            sb.Append(cssClassOverride);
+            sb.Append("\">");
+            state.Crumbs.Select(x => new { Entry = x, IsCurrent = IsCurrentPage(x.Key) }).OrderBy(x => x.IsCurrent).ToList().ForEach(x =>
+            {
+                string label = string.IsNullOrWhiteSpace(x.Entry.Label) ? x.Entry.Action : x.Entry.Label;
+
+                if (x.IsCurrent)
+                {
+                    sb.Append("<li class='" + cssClassActiveOverride + "'>" + label + "</li>");
+                }
+                else
+                {
+                    sb.Append("<li class='" + cssClassItemOverride + "'><a class='" + cssClassItemLinkOverride + "' href=\"" + x.Entry.Url + "\">" + label + "</a></li>");
+                }
+            });
+            sb.Append("</" + htmlContentOverride  + ">");
+            return sb.ToString();
+
+        }
+        public static string DisplayRaw()
 		{
 
 			var state = StateManager.GetState(SessionProvider.SessionId);
