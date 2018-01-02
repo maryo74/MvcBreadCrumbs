@@ -146,7 +146,7 @@ namespace MvcBreadCrumbs
 
 		}
 
-        public static string Display( string htmlContentOverride="ol",string cssClassOverride = "breadcrumb", string cssClassItemOverride = "", string cssClassItemLinkOverride = "", string cssClassActiveOverride= "active")
+        public static string Display( string htmlContentOverride="ol",string cssClassOverride = "breadcrumb", string cssClassItemOverride = "", string cssClassItemLinkOverride = "", string cssClassActiveOverride= "active",string activeAnchor ="")
         {
 
             var state = StateManager.GetState(SessionProvider.SessionId);
@@ -164,7 +164,16 @@ namespace MvcBreadCrumbs
 
                 if (x.IsCurrent)
                 {
-                    sb.Append("<li class='" + cssClassActiveOverride + "'>" + label + "</li>");
+                    if (activeAnchor != "")
+                    {
+                        sb.Append("<li class='" + cssClassItemOverride + "'><a class='" + cssClassItemLinkOverride + "' href=\"" + activeAnchor + "\">" + label + "</a></li>");
+
+                    }
+                    else
+                    {
+                        sb.Append("<li class='" + cssClassActiveOverride + "'>" + label + "</li>");
+                    }
+                  
                 }
                 else
                 {
